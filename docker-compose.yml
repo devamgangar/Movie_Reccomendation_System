@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  # Service 1: The Redis Cache Server
+  cache:
+    image: redis:7-alpine
+    container_name: rec_sys_cache
+    ports:
+      - "6379:6379"
+    restart: always
+
+  # Service 2: Your FastAPI Machine Learning Application
+  web:
+    build: .
+    container_name: rec_sys_api
+    ports:
+      - "8000:8000"
+    environment:
+      # This overrides 'localhost' so your API looks for the container named 'cache' instead!
+      - REDIS_HOST=cache 
+    depends_on:
+      - cache
+    restart: always

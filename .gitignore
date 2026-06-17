@@ -1,0 +1,17 @@
+# Ignore local virtual environment
+venv/
+.venv/
+
+# Ignore massive raw data files
+*.csv
+*.zip
+
+# Ignore local relational databases
+*.db
+
+# Ignore binary numpy embedding weights
+*.npy
+
+# Ignore OS specific junk
+.DS_Store
+Thumbs.db
