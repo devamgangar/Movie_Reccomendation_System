@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Streamline | ML Recommendation Engine</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #0b0f19; color: #f3f4f6; }
     </style>
@@ -14,29 +14,59 @@
     <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur px-6 py-4 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <span class="text-2xl">🎬</span>
+                <span class="text-2xl"></span>
                 <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">STREAMLINE AI</h1>
             </div>
-            <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-400">MovieLens 25M Production Node</span>
+            
+            <div class="flex items-center gap-5">
+                <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-400 hidden sm:inline-block">MovieLens 25M Production Node</span>
+                
+                <a href="https://github.com/devamgangar/Movie_Reccomendation_System" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-white transition group flex items-center gap-2">
+                    <svg class="w-6 h-6 group-hover:scale-110 transition" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="text-sm font-bold tracking-wide hidden sm:inline-block">GitHub</span>
+                </a>
+            </div>
+
         </div>
     </header>
 
     <main class="max-w-7xl mx-auto px-6 py-12 flex-grow w-full">
         
-        <div class="max-w-xl mx-auto text-center mb-12">
-            <h2 class="text-3xl font-extrabold mb-3">Real-Time User Retrieval</h2>
-            <p class="text-slate-400 text-sm mb-6">Enter a User ID to execute an asymmetric approximate nearest neighbor search over the high-scale latent embedding matrix space.</p>
+        <div class="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             
-            <div class="flex gap-3 bg-slate-900 p-2 rounded-xl border border-slate-800 shadow-2xl">
-                <input type="number" id="userIdInput" min="0" max="162540" placeholder="Enter User ID (0 - 162540)" 
-                    class="bg-transparent w-full px-4 py-3 outline-none text-white placeholder-slate-500 font-medium rounded-lg focus:bg-slate-950/50 transition">
-                <button onclick="fetchRecommendations()" 
-                    class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-slate-950 font-bold px-6 py-3 rounded-lg transition shrink-0 shadow-lg cursor-pointer">
-                    Generate
-                </button>
+            <div class="text-center bg-slate-900/30 p-6 rounded-2xl border border-slate-800">
+                <h2 class="text-2xl font-extrabold mb-2 text-white">For a User</h2>
+                <p class="text-slate-400 text-xs mb-6 h-8">Personalized feed based on watch history.</p>
+                
+                <div class="flex gap-2 bg-slate-900 p-1.5 rounded-xl border border-slate-700 shadow-inner">
+                    <input type="number" id="userIdInput" min="0" max="162540" placeholder="User ID (0-162540)" 
+                        class="bg-transparent w-full px-3 py-2 outline-none text-white placeholder-slate-500 font-medium rounded-lg focus:bg-slate-950/50 transition">
+                    <button onclick="fetchRecommendations()" 
+                        class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-slate-950 font-bold px-4 py-2 rounded-lg transition shrink-0 shadow-lg cursor-pointer text-sm">
+                        Generate
+                    </button>
+                </div>
             </div>
-            <p id="errorBox" class="text-red-400 text-xs font-medium mt-3 hidden"></p>
+
+            <div class="text-center bg-slate-900/30 p-6 rounded-2xl border border-slate-800">
+                <h2 class="text-2xl font-extrabold mb-2 text-white">More Like This</h2>
+                <p class="text-slate-400 text-xs mb-6 h-8">Item-to-Item geometric vector similarity.</p>
+                
+                <div class="flex gap-2 bg-slate-900 p-1.5 rounded-xl border border-slate-700 shadow-inner">
+                    <input type="text" id="movieTitleInput" placeholder="e.g. Matrix, Toy Story" 
+                        class="bg-transparent w-full px-3 py-2 outline-none text-white placeholder-slate-500 font-medium rounded-lg focus:bg-slate-950/50 transition">
+                    <button onclick="fetchSimilarMovies()" 
+                        class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-slate-950 font-bold px-4 py-2 rounded-lg transition shrink-0 shadow-lg cursor-pointer text-sm">
+                        Search
+                    </button>
+                </div>
+            </div>
+
         </div>
+        
+        <p id="errorBox" class="text-red-400 text-center text-sm font-medium mb-6 hidden"></p>
 
         <div id="statsBanner" class="max-w-4xl mx-auto mb-8 grid grid-cols-2 sm:grid-cols-3 gap-4 hidden">
             <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-4 text-center">
@@ -48,8 +78,8 @@
                 <p id="statTime" class="text-sm font-semibold text-emerald-400 font-mono">-</p>
             </div>
             <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-4 text-center col-span-2 sm:col-span-1">
-                <p class="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Matrix Dimension</p>
-                <p class="text-sm font-semibold text-slate-300 font-mono">59,047 Vectors</p>
+                <p id="statExtraLabel" class="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Matrix Dimension</p>
+                <p id="statExtraValue" class="text-sm font-semibold text-slate-300 font-mono">59,047 Vectors</p>
             </div>
         </div>
 
@@ -64,30 +94,60 @@
     </main>
 
     <footer class="border-t border-slate-900 bg-slate-950/80 px-6 py-4 text-center text-xs text-slate-600 font-mono">
-        Distributed Pipeline: FastAPI (Python 3.11-Slim Image) • Redis 7 (Alpine) • FAISS C++ Core
+        Distributed Pipeline: FastAPI (Python 3.11) • Redis 7 • FAISS C++
     </footer>
 
     <script>
+        // Helper function to render cards to keep code DRY
+        function renderCards(data, containerElement) {
+            data.forEach(movie => {
+                const genreBadges = movie.genres.map(g => 
+                    `<span class="text-[10px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-md bg-slate-800/80 border border-slate-700/50 text-slate-400">${g}</span>`
+                ).join(" ");
+
+                const cardHtml = `
+                    <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-5 hover:border-slate-700/60 transition duration-200 flex justify-between items-center group shadow-xl">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/30 flex items-center justify-center font-bold text-sm text-cyan-400 shadow-inner group-hover:scale-105 transition">
+                                #${movie.rank}
+                            </div>
+                            <div class="flex flex-col gap-1.5">
+                                <h3 class="font-bold text-white tracking-tight text-base group-hover:text-cyan-400 transition line-clamp-1">${movie.title} <span class="text-slate-500 font-normal text-sm ml-1">(${movie.year})</span></h3>
+                                <div class="flex flex-wrap gap-1">${genreBadges}</div>
+                            </div>
+                        </div>
+                        <div class="text-right shrink-0 ml-4">
+                            <p class="text-[10px] text-slate-500 font-bold tracking-wider uppercase mb-0.5">Vector Score</p>
+                            <p class="font-mono text-sm font-bold text-emerald-400">${movie.score.toFixed(4)}</p>
+                        </div>
+                    </div>
+                `;
+                containerElement.insertAdjacentHTML("beforeend", cardHtml);
+            });
+        }
+
+        // Helper function to reset UI state before fetch
+        function resetUI() {
+            document.getElementById("errorBox").classList.add("hidden");
+            document.getElementById("resultsGrid").innerHTML = "";
+            document.getElementById("resultsGrid").className = "max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4"; // Reset layout back to default for user feed
+            document.getElementById("statsBanner").classList.add("hidden");
+            document.getElementById("loadingState").classList.remove("hidden");
+        }
+
+        // ROUTE 1: User Recommendations
         async function fetchRecommendations() {
             const userId = document.getElementById("userIdInput").value;
             const errorBox = document.getElementById("errorBox");
             const resultsGrid = document.getElementById("resultsGrid");
-            const loadingState = document.getElementById("loadingState");
-            const statsBanner = document.getElementById("statsBanner");
 
-            // Input Validation Check
             if (!userId || userId < 0 || userId > 162540) {
                 errorBox.innerText = "Error: Please enter a valid production index bound between 0 and 162,540.";
                 errorBox.classList.remove("hidden");
                 return;
             }
             
-            // Clean interface slate for lookup execution
-            errorBox.classList.add("hidden");
-            resultsGrid.innerHTML = "";
-            statsBanner.classList.add("hidden");
-            loadingState.classList.remove("hidden");
-
+            resetUI();
             const startTime = performance.now();
 
             try {
@@ -100,42 +160,79 @@
                 const result = await response.json();
                 const latency = (performance.now() - startTime).toFixed(2);
 
-                // Update Performance Metrical Dashboard Values
                 document.getElementById("statSource").innerText = result.source;
                 document.getElementById("statTime").innerText = `${latency} ms`;
-                statsBanner.classList.remove("hidden");
+                document.getElementById("statExtraLabel").innerText = "Matrix Dimension";
+                document.getElementById("statExtraValue").innerText = "59,047 Vectors";
+                document.getElementById("statsBanner").classList.remove("hidden");
 
-                // Process and map returned row lists to interactive UI cards
-                result.data.forEach(movie => {
-                    const genreBadges = movie.genres.map(g => 
-                        `<span class="text-[10px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-md bg-slate-800/80 border border-slate-700/50 text-slate-400">${g}</span>`
-                    ).join(" ");
-
-                    const cardHtml = `
-                        <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-5 hover:border-slate-700/60 transition duration-200 flex justify-between items-center group shadow-xl">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/30 flex items-center justify-center font-bold text-sm text-cyan-400 shadow-inner group-hover:scale-105 transition">
-                                    #${movie.rank}
-                                </div>
-                                <div class="flex flex-col gap-1.5">
-                                    <h3 class="font-bold text-white tracking-tight text-base group-hover:text-cyan-400 transition line-clamp-1">${movie.title} <span class="text-slate-500 font-normal text-sm ml-1">(${movie.year})</span></h3>
-                                    <div class="flex flex-wrap gap-1">${genreBadges}</div>
-                                </div>
-                            </div>
-                            <div class="text-right shrink-0 ml-4">
-                                <p class="text-[10px] text-slate-500 font-bold tracking-wider uppercase mb-0.5">Vector Score</p>
-                                <p class="font-mono text-sm font-bold text-emerald-400">${movie.score.toFixed(4)}</p>
-                            </div>
-                        </div>
-                    `;
-                    resultsGrid.insertAdjacentHTML("beforeend", cardHtml);
-                });
+                renderCards(result.data, resultsGrid);
 
             } catch (err) {
                 errorBox.innerText = err.message;
                 errorBox.classList.remove("hidden");
             } finally {
-                loadingState.classList.add("hidden");
+                document.getElementById("loadingState").classList.add("hidden");
+            }
+        }
+
+        // ROUTE 2: Movie Similarity (Dual Engine)
+        async function fetchSimilarMovies() {
+            const movieTitle = document.getElementById("movieTitleInput").value;
+            const errorBox = document.getElementById("errorBox");
+            const resultsGrid = document.getElementById("resultsGrid");
+
+            if (!movieTitle || movieTitle.trim() === "") {
+                errorBox.innerText = "Error: Please enter a movie title to search.";
+                errorBox.classList.remove("hidden");
+                return;
+            }
+            
+            resetUI();
+            const startTime = performance.now();
+
+            try {
+                const response = await fetch(`/similar/movie/?title=${encodeURIComponent(movieTitle)}&top_k=10`);
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.detail || "Failed to reach pipeline runtime network engine.");
+                }
+
+                const result = await response.json();
+                const latency = (performance.now() - startTime).toFixed(2);
+
+                document.getElementById("statSource").innerText = result.source;
+                document.getElementById("statTime").innerText = `${latency} ms`;
+                document.getElementById("statExtraLabel").innerText = "Target Match";
+                document.getElementById("statExtraValue").innerText = result.target_movie;
+                document.getElementById("statsBanner").classList.remove("hidden");
+
+                // --- INJECT DUAL HEADERS AND GRIDS ---
+                resultsGrid.className = "max-w-5xl mx-auto flex flex-col gap-10"; // Change to stack layout
+                
+                resultsGrid.innerHTML = `
+                    <div>
+                        <h3 class="text-xl font-bold mb-1 text-white border-l-4 border-cyan-500 pl-3">Viewers Also Watched</h3>
+                        <p class="text-slate-400 text-sm mb-4 pl-4">Collaborative Filtering (Popularity & Behavioral Gravity)</p>
+                        <div id="collabGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-bold mb-1 text-white border-l-4 border-emerald-500 pl-3">Similar Genre & Story</h3>
+                        <p class="text-slate-400 text-sm mb-4 pl-4">Content-Based Filtering (TF-IDF Text Vectors)</p>
+                        <div id="contentGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                    </div>
+                `;
+
+                // Render cards into their respective containers
+                renderCards(result.collaborative_data, document.getElementById("collabGrid"));
+                renderCards(result.content_data, document.getElementById("contentGrid"));
+
+            } catch (err) {
+                errorBox.innerText = err.message;
+                errorBox.classList.remove("hidden");
+            } finally {
+                document.getElementById("loadingState").classList.add("hidden");
             }
         }
     </script>

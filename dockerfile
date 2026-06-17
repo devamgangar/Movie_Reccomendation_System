@@ -11,7 +11,7 @@ COPY user_factors.npy .
 COPY item_factors.npy .
 COPY movie_index_to_id.npy .
 COPY metadata.db .
-
+COPY content_factors.npy .
 # CRITICAL: Copy the frontend UI page into the container root workspace
 COPY index.html .
 
