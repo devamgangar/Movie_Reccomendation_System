@@ -16,7 +16,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code and pre-trained arrays into the container
-COPY main.py .
+COPY src/main.py .
 COPY user_factors.npy .
 COPY item_factors.npy .
 COPY movie_index_to_id.npy .
