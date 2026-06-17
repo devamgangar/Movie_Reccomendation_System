@@ -3,11 +3,32 @@ import sqlite3
 import numpy as np
 import faiss
 import redis
+import os
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
+def clean_movie_title(title: str) -> str:
+    """Transforms 'Matrix, The (1999)' or 'Godfather, The' into natural reading order."""
+    articles = [", The", ", A", ", An"]
+    for article in articles:
+        if title.endswith(article):
+            # Strip the article from the end and prepend it to the front
+            actual_article = article.replace(", ", "").strip()
+            return f"{actual_article} {title[:-len(article)]}"
+    return title
 app = FastAPI(
     title="Real-Time Recommendation Engine",
     description="Asynchronous ML Microservice serving MovieLens recommendations via FAISS and Redis."
+)
+
+# --- ENABLE CORS CONTROL ---
+# This allows your web browser to securely talk to your FastAPI backend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # In production, swap with your exact frontend domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # --- GLOBAL SERVICE INITIALIZATION (Warm Startup) ---
@@ -17,19 +38,17 @@ try:
     ITEM_FACTORS = np.load("item_factors.npy").astype('float32')
     MOVIE_INDEX_TO_ID = np.load("movie_index_to_id.npy")
 
-    # Initialize and populate the FAISS index globally once
     LATENT_DIMENSIONS = ITEM_FACTORS.shape[1]
     FAISS_INDEX = faiss.IndexFlatIP(LATENT_DIMENSIONS)
     FAISS_INDEX.add(ITEM_FACTORS)
     print("FAISS Index and latent factors successfully cached in memory.")
 except Exception as e:
     print(f"CRITICAL STARTUP ERROR: {e}")
-    raise SystemExit("Missing core embedding files. Run training and setup scripts first.")
+    raise SystemExit("Missing core embedding files.")
 
-# Connect to Redis client (will fail gracefully if server is not running)
-import os
 redis_host = os.getenv("REDIS_HOST", "localhost")
 redis_client = redis.Redis(host=redis_host, port=6379, db=0, decode_responses=True)
+
 
 # --- CORE ENDPOINT ---
 @app.get("/recommend/{user_id}")
@@ -41,17 +60,17 @@ async def get_recommendations(user_id: int, top_k: int = 10):
         cached_data = redis_client.get(cache_key)
         if cached_data:
             print(f"CACHE HIT for user_id {user_id}")
-            return json.loads(cached_data)
+            return {
+                "source": "Redis Cache Hit (RAM)",
+                "data": json.loads(cached_data)
+            }
     except redis.exceptions.ConnectionError:
-        # Graceful fallback: log warning but don't halt execution
         print("WARNING: Redis connection unavailable. Falling back to live computation.")
     
-    # 2. Cache Miss: Translate raw User ID to contiguous Matrix Index
-    # For our tiny dataset test, we will assume user_id acts as user_index. 
-    # (In production, you'd use a SQL lookup table mapping real IDs to matrix rows).
+    # 2. Cache Miss: Verify boundary bounds
     user_index = user_id
     if user_index < 0 or user_index >= len(USER_FACTORS):
-        raise HTTPException(status_code=404, detail="User ID not found in embedding space.")
+        raise HTTPException(status_code=404, detail=f"User ID must be between 0 and {len(USER_FACTORS) - 1}")
         
     # 3. Vector Search via In-Memory FAISS Index
     user_vector = USER_FACTORS[user_index].reshape(1, -1).astype('float32')
@@ -79,12 +98,12 @@ async def get_recommendations(user_id: int, top_k: int = 10):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database retrieval failure: {e}")
 
-    # Parse structural row aggregates
     movie_metadata = {}
     for movie_id, title, year, genre_name in rows:
         if movie_id not in movie_metadata:
+            display_title = clean_movie_title(title)
             movie_metadata[movie_id] = {
-                "title": title,
+                "title": display_title,
                 "year": year if year else "N/A",
                 "genres": []
             }
@@ -105,11 +124,18 @@ async def get_recommendations(user_id: int, top_k: int = 10):
                 "score": scores[rank - 1]
             })
 
-    # 6. Push computed results to cache with an Expiration Time (e.g., 3600 seconds / 1 hour)
+    # 6. Push computed results to cache
     try:
         redis_client.setex(cache_key, 3600, json.dumps(payload))
         print(f"CACHE WRITE for user_id {user_id}")
     except redis.exceptions.ConnectionError:
         pass
 
-    return payload
+    return {
+        "source": "Live FAISS Vector Search + SQLite Join",
+        "data": payload
+    }
+from fastapi.responses import FileResponse
+@app.get("/")
+async def serve_ui():
+    return FileResponse("index.html")
